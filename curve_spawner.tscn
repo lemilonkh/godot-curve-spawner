@@ -1,15 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://lbecihy175ej"]
+[gd_scene load_steps=8 format=3 uid="uid://lbecihy175ej"]
 
 [ext_resource type="Script" uid="uid://ba1358dvf82q3" path="res://addons/godot-curve-spawner/curve_spawner.gd" id="1_pjlu0"]
 [ext_resource type="PackedScene" uid="uid://trii28p84017" path="res://addons/godot-curve-spawner/demo/coin.tscn" id="2_pj7ng"]
 [ext_resource type="PackedScene" uid="uid://bqvade0f2tlb4" path="res://addons/godot-curve-spawner/demo/ball.tscn" id="3_sq6au"]
 [ext_resource type="Script" uid="uid://duorfaqla8e5m" path="res://addons/godot-curve-spawner/spawn_modifier.gd" id="9_sdj3d"]
-[ext_resource type="Script" uid="uid://bw8chlh6lxgdm" path="res://addons/godot-curve-spawner/modifiers/rotation_modifier.gd" id="10_bfxso"]
 [ext_resource type="Script" uid="uid://dnchlivkxuxp4" path="res://addons/godot-curve-spawner/modifiers/raycast_modifier.gd" id="11_bfxso"]
-
-[sub_resource type="Resource" id="Resource_sdj3d"]
-script = ExtResource("10_bfxso")
-metadata/_custom_type_script = "uid://bw8chlh6lxgdm"
 
 [sub_resource type="Resource" id="Resource_bpeud"]
 script = ExtResource("11_bfxso")
@@ -29,7 +24,7 @@ random_seed = 2
 objects = Array[PackedScene]([ExtResource("2_pj7ng"), ExtResource("3_sq6au")])
 default_spacing = 141.175
 average_player_speed = 8.0
-modifiers = Array[ExtResource("9_sdj3d")]([SubResource("Resource_sdj3d"), SubResource("Resource_bpeud")])
+modifiers = Array[ExtResource("9_sdj3d")]([SubResource("Resource_bpeud")])
 metadata/_custom_type_script = "uid://ba1358dvf82q3"
 
 [node name="Path3D" type="Path3D" parent="."]
