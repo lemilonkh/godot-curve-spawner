@@ -1,27 +1,27 @@
 @tool
 class_name CurveSpawner extends Node3D
 
-@export_tool_button("Bake Objects", "Bake") var bake_button := _bake
+@export_tool_button("Bake Objects", "Bake") var bake_button := bake_objects
 @export_range(0, 1000000) var random_seed := 1
 @export var add_to_scene := false ## when enabled, nodes are added to the scene and saved with it (by setting the owner)
 @export var use_auto_bake := false: ## when curve is changed, update spawned objects to be moved onto the new path
 	set(value):
 		use_auto_bake = value
 		if use_auto_bake:
-			path_3d.curve_changed.connect(_bake)
-		elif path_3d.curve_changed.is_connected(_bake):
-			path_3d.curve_changed.disconnect(_bake)
+			path_3d.curve_changed.connect(bake_objects)
+		elif path_3d.curve_changed.is_connected(bake_objects):
+			path_3d.curve_changed.disconnect(bake_objects)
 
 @export_category("Nodes")
 @export_node_path("Path3D") var path_3d_node := ^"Path3D":
 	set(value):
-		if is_instance_valid(path_3d) and path_3d.curve_changed.is_connected(_bake):
-			path_3d.curve_changed.disconnect(_bake)
+		if is_instance_valid(path_3d) and path_3d.curve_changed.is_connected(bake_objects):
+			path_3d.curve_changed.disconnect(bake_objects)
 		
 		path_3d_node = value
 		path_3d = get_node(path_3d_node)
 		if use_auto_bake:
-			path_3d.curve_changed.connect(_bake)
+			path_3d.curve_changed.connect(bake_objects)
 @export_node_path("Node3D") var objects_container_node := ^"Objects":
 	set(value):
 		var new_container := get_node(objects_container_node)
@@ -66,11 +66,10 @@ func _validate_property(property: Dictionary):
 	if use_bpm and property.name == "default_spacing":
 		property.usage |= PROPERTY_USAGE_READ_ONLY
 
-
 func _exit_tree() -> void:
-	path_3d.curve_changed.disconnect(_bake)
+	path_3d.curve_changed.disconnect(bake_objects)
 
-func _bake() -> void:
+func bake_objects() -> void:
 	rng.seed = random_seed
 	
 	var object_interval := 0.0
@@ -100,7 +99,6 @@ func _bake() -> void:
 		var object: Node3D = object_scene.instantiate()
 		objects_container.add_child(object, true) # force readable names
 		object.global_transform = object_transform
-		#object.global_position = path_3d.to_global(point)
 		object.scale = Vector3.ONE * object_scale
 		
 		if add_to_scene:
