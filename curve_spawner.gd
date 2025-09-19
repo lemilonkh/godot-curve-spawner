@@ -32,7 +32,6 @@ class_name CurveSpawner extends Node3D
 
 @export_category("Transforms")
 @export_range(0, 100) var object_scale := 1.0
-@export var use_curve_rotation := true
 
 @export_category("Modifiers")
 @export var modifiers: Array[SpawnModifier] = []
@@ -97,30 +96,33 @@ func _on_timeout() -> void:
 func _bake() -> void:
 	rng.seed = random_seed
 	
+	var object_interval := 0.0
 	if use_bpm:
 		var beat_time := 60.0 / bpm
 		var beat_distance := average_player_speed * beat_time
-		curve.bake_interval = beat_distance
+		object_interval = beat_distance
 	else:
-		curve.bake_interval = default_spacing
+		object_interval = default_spacing
 	
 	for child: Node3D in objects_container.get_children():
 		child.queue_free() # TODO introduce object pooling?
 	
-	var points := curve.get_baked_points()
-	var up_vectors := PackedVector3Array()
-	if use_curve_rotation:
-		up_vectors = curve.get_baked_up_vectors()
+	var total_length := curve.get_baked_length()
+	var index := 0
 	
-	for index in points.size():
-		var point := points[index]
+	for offset: float in range(0, total_length, object_interval):
+		var object_transform := curve.sample_baked_with_rotation(offset, true) # TODO measure impact of cubic sampling (true argument)
+		var up_vector := object_transform.basis.y
+		var point := object_transform.origin
+		
 		# TODO implement this as RandomPattern and add 1-3 pattern and AABB pattern etc.
 		# either user selectable with dropdown or custom resource exported as abstract base class
 		var mesh_index := rng.randi_range(0, objects.size() - 1)
 		var object_scene: PackedScene = objects[mesh_index]
 		var object: Node3D = object_scene.instantiate()
 		objects_container.add_child(object)
-		object.global_position = path_3d.to_global(point)
+		object.global_transform = object_transform
+		#object.global_position = path_3d.to_global(point)
 		object.scale = Vector3.ONE * object_scale
 		
 		if add_to_scene:
@@ -129,11 +131,9 @@ func _bake() -> void:
 			else:
 				object.owner = self.owner
 		
-		var up_vector := Vector3.ZERO
-		if use_curve_rotation:
-			up_vector = up_vectors[index]
-		
 		for modifier: SpawnModifier in modifiers:
 			modifier.apply(object, point, up_vector, index)
+		
+		index += 1
 	
 	was_curve_changed = false
