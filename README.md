@@ -1,6 +1,8 @@
 # godot-curve-spawner
 Godot 4.5+ addon that spawns scenes in regular intervals along a 3D curve, can be synced to BPM and player speed
 
+![CurveSpawner screenshot with fruit spawned along a windy curve and the inspector options visible](/docs/screenshot.png)
+
 ## Usage
 1. Clone repository into addons/godot-curve-spawner or add it as a submodule
 1. There is a demo scene available in [curve_spawner.tscn](/curve_spawner.tscn)
