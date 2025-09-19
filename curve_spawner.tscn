@@ -1,0 +1,52 @@
+[gd_scene load_steps=17 format=3 uid="uid://lbecihy175ej"]
+
+[ext_resource type="Script" uid="uid://ba1358dvf82q3" path="res://addons/godot-curve-spawner/curve_spawner.gd" id="1_pjlu0"]
+[ext_resource type="PackedScene" uid="uid://ck5roqjyscj57" path="res://assets/models/fruits-and-veggies/applered01.gltf" id="2_5jlu3"]
+[ext_resource type="PackedScene" uid="uid://c2lwnbdsylcr3" path="res://assets/models/fruits-and-veggies/cherry03.gltf" id="3_6ab1h"]
+[ext_resource type="PackedScene" uid="uid://tvvbbjwftj2k" path="res://assets/models/fruits-and-veggies/coconut01.gltf" id="4_sdj3d"]
+[ext_resource type="PackedScene" uid="uid://c4fedvks4i2ah" path="res://assets/models/fruits-and-veggies/clementine01.gltf" id="5_bfxso"]
+[ext_resource type="PackedScene" uid="uid://cer6378esi813" path="res://assets/models/fruits-and-veggies/kiwi02.gltf" id="6_bpeud"]
+[ext_resource type="PackedScene" uid="uid://jfqyj2gv4t6l" path="res://assets/models/fruits-and-veggies/mango01.gltf" id="7_h7egc"]
+[ext_resource type="PackedScene" uid="uid://dsb1x1omjvw15" path="res://assets/models/fruits-and-veggies/lime03.gltf" id="8_4uu3s"]
+[ext_resource type="Script" uid="uid://duorfaqla8e5m" path="res://addons/godot-curve-spawner/spawn_modifier.gd" id="9_sdj3d"]
+[ext_resource type="Script" uid="uid://bw8chlh6lxgdm" path="res://addons/godot-curve-spawner/rotation_modifier.gd" id="10_bfxso"]
+[ext_resource type="Script" uid="uid://dnchlivkxuxp4" path="res://addons/godot-curve-spawner/raycast_modifier.gd" id="11_bfxso"]
+[ext_resource type="Script" uid="uid://lpe7r3qx7on8" path="res://addons/godot-curve-spawner/wiggle_modifier.gd" id="12_bpeud"]
+
+[sub_resource type="Resource" id="Resource_sdj3d"]
+script = ExtResource("10_bfxso")
+metadata/_custom_type_script = "uid://bw8chlh6lxgdm"
+
+[sub_resource type="Resource" id="Resource_bpeud"]
+script = ExtResource("11_bfxso")
+metadata/_custom_type_script = "uid://dnchlivkxuxp4"
+
+[sub_resource type="Resource" id="Resource_h7egc"]
+script = ExtResource("12_bpeud")
+amplitude = 2.0
+period = 4.0
+metadata/_custom_type_script = "uid://lpe7r3qx7on8"
+
+[sub_resource type="Curve3D" id="Curve3D_pjlu0"]
+bake_interval = 5.142857
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 5.8536363, 0, -5.801444, -0.5299845, -0.79828453, -0.605402, 0.5299845, 0.79828453, 0.605402, 4.652963, -1.3752646, 0.013431549, 6.928947, 2.6186452, 0.7728653, -6.928947, -2.6186452, -0.7728653, 6.85771, 0.005757332, 7.1981544, -0.3622749, -1.697607, -0.39424133, 0.3622749, 1.697607, 0.39424133, 1.1779382, 1.7622671, 1.8951778, -0.7368903, 1.7019471, 2.280501, 0.7368903, -1.7019471, -2.280501, -4.6226482, 1.4633311, -0.69055223, 2.0403423, 0.7195687, 0.16148376, -2.0403423, -0.7195687, -0.16148376, -6.0249014, -1.5009933, -3.5406332, 2.9634876, -0.7994981, 0.5191002, -2.9634876, 0.7994981, -0.5191002, -18.732182, -3.6543756, -1.4383755, -0.36240387, -1.9326963, -1.1691151, 0.36240387, 1.9326963, 1.1691151, -21.96706, 0.71010303, -0.46281052, -2.1739063, 1.032928, -0.1377182, 2.1739063, -1.032928, 0.1377182, -11.07135, 3.1794791, 5.214265, -2.0361676, -2.7608552, -2.1591442, 2.0361676, 2.7608552, 2.1591442, -14.986252, 3.9451776, 11.884078, 0, 0, 0, 0, 0, 0, 9.42877, 9.444731, 6.2797565),
+"tilts": PackedFloat32Array(0, -0.3312823, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 11
+
+[node name="CurveSpawner" type="Node3D"]
+script = ExtResource("1_pjlu0")
+random_seed = 2
+objects = Array[PackedScene]([ExtResource("2_5jlu3"), ExtResource("3_6ab1h"), ExtResource("4_sdj3d"), ExtResource("5_bfxso"), ExtResource("6_bpeud"), ExtResource("7_h7egc"), ExtResource("8_4uu3s")])
+default_spacing = 141.175
+average_player_speed = 12.0
+object_scale = 12.0
+modifiers = Array[ExtResource("9_sdj3d")]([SubResource("Resource_sdj3d"), SubResource("Resource_bpeud"), SubResource("Resource_h7egc")])
+metadata/_custom_type_script = "uid://ba1358dvf82q3"
+
+[node name="Path3D" type="Path3D" parent="."]
+curve = SubResource("Curve3D_pjlu0")
+debug_custom_color = Color(0.64003116, 1, 0.8132193, 1)
+
+[node name="Objects" type="Node3D" parent="."]
