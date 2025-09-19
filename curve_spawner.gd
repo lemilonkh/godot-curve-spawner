@@ -13,8 +13,26 @@ class_name CurveSpawner extends Node3D
 			path_3d.curve_changed.disconnect(_bake)
 
 @export_category("Nodes")
-@export_node_path("Path3D") var path_3d_node := ^"Path3D"
-@export_node_path("Node3D") var objects_container_node := ^"Objects"
+@export_node_path("Path3D") var path_3d_node := ^"Path3D":
+	set(value):
+		if is_instance_valid(path_3d) and path_3d.curve_changed.is_connected(_bake):
+			path_3d.curve_changed.disconnect(_bake)
+		
+		path_3d_node = value
+		path_3d = get_node(path_3d_node)
+		if use_auto_bake:
+			path_3d.curve_changed.connect(_bake)
+@export_node_path("Node3D") var objects_container_node := ^"Objects":
+	set(value):
+		var new_container := get_node(objects_container_node)
+		
+		# make sure no non-editable objects are left in the temporary scene accidentally
+		if not add_to_scene and is_instance_valid(objects_container) and objects_container != new_container:
+			for child in objects_container.get_children():
+				child.queue_free()
+		
+		objects_container_node = value
+		objects_container = new_container
 
 @export_category("Objects")
 @export var objects: Array[PackedScene] = []
