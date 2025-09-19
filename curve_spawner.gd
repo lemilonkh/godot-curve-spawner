@@ -111,7 +111,8 @@ func _bake() -> void:
 	var index := 0
 	
 	for offset: float in range(0, total_length, object_interval):
-		var object_transform := curve.sample_baked_with_rotation(offset, true) # TODO measure impact of cubic sampling (true argument)
+		# TODO measure impact of cubic sampling (true argument)
+		var object_transform := curve.sample_baked_with_rotation(offset, true)
 		var up_vector := object_transform.basis.y
 		var point := object_transform.origin
 		
@@ -120,7 +121,7 @@ func _bake() -> void:
 		var mesh_index := rng.randi_range(0, objects.size() - 1)
 		var object_scene: PackedScene = objects[mesh_index]
 		var object: Node3D = object_scene.instantiate()
-		objects_container.add_child(object)
+		objects_container.add_child(object, true) # force readable names
 		object.global_transform = object_transform
 		#object.global_position = path_3d.to_global(point)
 		object.scale = Vector3.ONE * object_scale
