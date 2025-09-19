@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://bqvade0f2tlb4"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_drqdc"]
+albedo_color = Color(0.97599095, 0.7858896, 0.44220355, 1)
+metallic = 0.76
+roughness = 0.56
+
+[sub_resource type="SphereMesh" id="SphereMesh_h4riu"]
+material = SubResource("StandardMaterial3D_drqdc")
+
+[node name="Coin" type="MeshInstance3D"]
+transform = Transform3D(0.1, 0, 0, 0, -4.371139e-09, -0.1, 0, 0.1, -4.371139e-09, 0, 0, 0)
+mesh = SubResource("SphereMesh_h4riu")

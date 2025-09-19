@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://trii28p84017"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_drqdc"]
+albedo_color = Color(0.97599095, 0.7858896, 0.44220355, 1)
+metallic = 0.76
+roughness = 0.56
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_n6d6g"]
+material = SubResource("StandardMaterial3D_drqdc")
+height = 0.2
+
+[node name="Coin" type="MeshInstance3D"]
+transform = Transform3D(0.1, 0, 0, 0, -4.371139e-09, -0.1, 0, 0.1, -4.371139e-09, 0, 0, 0)
+mesh = SubResource("CylinderMesh_n6d6g")
