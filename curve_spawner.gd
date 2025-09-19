@@ -8,9 +8,9 @@ class_name CurveSpawner extends Node3D
 	set(value):
 		use_auto_bake = value
 		if use_auto_bake:
-			_setup_timer()
-		else:
-			_clear_timer()
+			path_3d.curve_changed.connect(_bake)
+		elif path_3d.curve_changed.is_connected(_bake):
+			path_3d.curve_changed.disconnect(_bake)
 
 @export_category("Nodes")
 @export_node_path("Path3D") var path_3d_node := ^"Path3D"
@@ -36,15 +36,11 @@ class_name CurveSpawner extends Node3D
 @export_category("Modifiers")
 @export var modifiers: Array[SpawnModifier] = []
 
-const AUTOBAKE_INTERVAL := 5.0 ## seconds
-
 @onready var path_3d: Path3D = get_node(path_3d_node)
 @onready var objects_container: Node3D = get_node(objects_container_node)
 @onready var curve: Curve3D = path_3d.curve
 
 var rng := RandomNumberGenerator.new()
-var was_curve_changed := true
-var timer: Timer = null
 
 func _validate_property(property: Dictionary):
 	if not use_bpm and (property.name == "bpm" or property.name == "average_player_speed"):
@@ -53,45 +49,8 @@ func _validate_property(property: Dictionary):
 		property.usage |= PROPERTY_USAGE_READ_ONLY
 
 
-func _ready() -> void:
-	path_3d.curve_changed.connect(_on_curve_changed)
-	if use_auto_bake:
-		_setup_timer()
-
-
 func _exit_tree() -> void:
-	_clear_timer()
-
-
-func _setup_timer() -> void:
-	if is_instance_valid(timer):
-		_clear_timer()
-	
-	timer = Timer.new()
-	timer.wait_time = AUTOBAKE_INTERVAL
-	add_child(timer)
-	timer.one_shot = false
-	timer.timeout.connect(_on_timeout)
-	timer.start()
-
-
-func _clear_timer() -> void:
-	if is_instance_valid(timer):
-		if timer.timeout.is_connected(_on_curve_changed):
-			timer.timeout.disconnect(_on_curve_changed)
-		timer.queue_free()
-		timer = null
-
-
-func _on_curve_changed() -> void:
-	# update spawned objects to be moved onto the new path (next time _on_timeout is called)
-	was_curve_changed = true
-
-
-func _on_timeout() -> void:
-	if use_auto_bake and was_curve_changed:
-		_bake()
-
+	path_3d.curve_changed.disconnect(_bake)
 
 func _bake() -> void:
 	rng.seed = random_seed
@@ -136,5 +95,3 @@ func _bake() -> void:
 			modifier.apply(object, point, up_vector, index)
 		
 		index += 1
-	
-	was_curve_changed = false
