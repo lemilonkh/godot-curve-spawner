@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3 uid="uid://dhs68hilkam78"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r1y57"]
+albedo_color = Color(0.98410934, 0.15958771, 0.45506233, 1)
+metallic = 0.76
+roughness = 0.56
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_vqt1r"]
+material = SubResource("StandardMaterial3D_r1y57")
+top_radius = 0.1
+bottom_radius = 0.1
+height = 1.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_er0s5"]
+material = SubResource("StandardMaterial3D_r1y57")
+top_radius = 0.1
+bottom_radius = 0.1
+height = 1.0
+radial_segments = 8
+rings = 1
+
+[node name="Cross" type="MeshInstance3D"]
+transform = Transform3D(0.1, 0, 0, 0, -4.371139e-09, -0.1, 0, 0.1, -4.371139e-09, 0, 0, 0)
+mesh = SubResource("CylinderMesh_vqt1r")
+
+[node name="Copy" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_er0s5")
