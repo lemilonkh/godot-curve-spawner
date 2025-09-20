@@ -1,0 +1,124 @@
+[gd_scene load_steps=12 format=3 uid="uid://dxouv3go4wkyq"]
+
+[ext_resource type="Script" uid="uid://ba1358dvf82q3" path="res://addons/godot-curve-spawner/curve_spawner.gd" id="1_7mvyn"]
+[ext_resource type="Script" uid="uid://duorfaqla8e5m" path="res://addons/godot-curve-spawner/spawn_modifier.gd" id="2_v1kyl"]
+[ext_resource type="Script" uid="uid://dnchlivkxuxp4" path="res://addons/godot-curve-spawner/modifiers/raycast_modifier.gd" id="3_b6l5m"]
+[ext_resource type="PackedScene" uid="uid://trii28p84017" path="res://addons/godot-curve-spawner/demo/coin.tscn" id="4_qva7r"]
+[ext_resource type="PackedScene" uid="uid://bqvade0f2tlb4" path="res://addons/godot-curve-spawner/demo/ball.tscn" id="5_xqfro"]
+[ext_resource type="PackedScene" uid="uid://dhs68hilkam78" path="res://addons/godot-curve-spawner/demo/cross.tscn" id="6_v1kyl"]
+
+[sub_resource type="Resource" id="Resource_bpeud"]
+script = ExtResource("3_b6l5m")
+metadata/_custom_type_script = "uid://dnchlivkxuxp4"
+
+[sub_resource type="Curve3D" id="Curve3D_pjlu0"]
+bake_interval = 3.4285715
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 5.8536363, 0, -5.801444, -0.5299845, -0.79828453, -0.605402, 0.5299845, 0.79828453, 0.605402, 4.652963, -1.3752646, 0.013431549, 6.928947, 2.6186452, 0.7728653, -6.928947, -2.6186452, -0.7728653, 6.85771, 0.005757332, 7.1981544, -0.3622749, -1.697607, -0.39424133, 0.3622749, 1.697607, 0.39424133, 1.829, 2.342, 0.423, -0.7368903, 1.7019471, 2.280501, 0.7368903, -1.7019471, -2.280501, -4.6226482, 1.4633311, -0.69055223, 2.0403423, 0.7195687, 0.16148376, -2.0403423, -0.7195687, -0.16148376, -6.0249014, -1.5009933, -3.5406332, 2.9634876, -0.7994981, 0.5191002, -2.9634876, 0.7994981, -0.5191002, -18.732182, -3.6543756, -1.4383755, -0.36240387, -1.9326963, -1.1691151, 0.36240387, 1.9326963, 1.1691151, -21.96706, 0.71010303, -0.46281052, -2.1739063, 1.032928, -0.1377182, 2.1739063, -1.032928, 0.1377182, -11.07135, 3.1794791, 5.214265, -2.0361676, -2.7608552, -2.1591442, 2.0361676, 2.7608552, 2.1591442, -14.986252, 3.9451776, 11.884078, 0, 0, 0, 0, 0, 0, 9.42877, 9.444731, 6.2797565),
+"tilts": PackedFloat32Array(0, -0.3312823, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 11
+
+[sub_resource type="Animation" id="Animation_v1kyl"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Path3D:curve:point_3/position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(1.829, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Path3D:curve:point_3/position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(2.342, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Path3D:curve:point_3/position:z")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.423, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_7mvyn"]
+resource_name = "wiggle"
+length = 3.0
+loop_mode = 1
+step = 0.1
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Path3D:curve:point_3/position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(1.829, -0.25, 0, 1.5277531, -5.829, 1.829, -0.27224708, -16.829, 0.25, 0),
+"times": PackedFloat32Array(0, 3)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Path3D:curve:point_3/position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 2, 0),
+"points": PackedFloat32Array(2.342, -0.25, 0, 0.25, 0, 6, -1.0999999, -4, 0, 0, -3, -0.37224698, 9, 0.32775307, -29.342),
+"times": PackedFloat32Array(0, 2.3, 3)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Path3D:curve:point_3/position:z")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(0.423, -0.25, 0, 0.25, 0, 4, -0.4722469, 16, 0, 0, 0.423, -0.27224708, -7.423, 0.25, 0),
+"times": PackedFloat32Array(0, 1.7, 3)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_b6l5m"]
+_data = {
+&"RESET": SubResource("Animation_v1kyl"),
+&"wiggle": SubResource("Animation_7mvyn")
+}
+
+[node name="CurveSpawner" type="Node3D"]
+transform = Transform3D(0.9987123, 0, -0.050732385, 0, 1, 0, 0.050732385, 0, 0.9987123, 0, 0, 0)
+script = ExtResource("1_7mvyn")
+modifiers = Array[ExtResource("2_v1kyl")]([SubResource("Resource_bpeud")])
+use_random_pattern = false
+random_seed = 2
+index_pattern = "AABBCC"
+objects = Array[PackedScene]([ExtResource("4_qva7r"), ExtResource("5_xqfro"), ExtResource("6_v1kyl")])
+default_spacing = 141.175
+average_player_speed = 8.0
+metadata/_custom_type_script = "uid://ba1358dvf82q3"
+
+[node name="Path3D" type="Path3D" parent="."]
+curve = SubResource("Curve3D_pjlu0")
+debug_custom_color = Color(0.64003116, 1, 0.8132193, 1)
+
+[node name="Objects" type="Node3D" parent="."]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_b6l5m")
+}
