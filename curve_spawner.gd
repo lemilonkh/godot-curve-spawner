@@ -2,7 +2,6 @@
 class_name CurveSpawner extends Node3D
 
 @export_tool_button("Bake Objects", "Bake") var bake_button := bake_objects
-@export_range(0, 1000000) var random_seed := 1
 @export var add_to_scene := false ## when enabled, nodes are added to the scene and saved with it (by setting the owner)
 @export var use_auto_bake := false: ## when curve is changed, update spawned objects to be moved onto the new path
 	set(value):
@@ -11,6 +10,15 @@ class_name CurveSpawner extends Node3D
 			path_3d.curve_changed.connect(bake_objects)
 		elif path_3d.curve_changed.is_connected(bake_objects):
 			path_3d.curve_changed.disconnect(bake_objects)
+
+@export_category("Object Modifiers")
+@export var modifiers: Array[SpawnModifier] = []
+
+@export_category("Object Selection")
+@export var use_random_pattern := true ## if index_pattern should be ignored and all objects picked randomly (according to random_seed)
+@export var use_object_shuffle := false ## if objects should be shuffled before applying pattern (using random_seed)
+@export_range(0, 1000000) var random_seed := 1
+@export var index_pattern := "AABB"
 
 @export_category("Nodes")
 @export_node_path("Path3D") var path_3d_node := ^"Path3D":
@@ -51,9 +59,6 @@ class_name CurveSpawner extends Node3D
 @export_category("Transforms")
 @export_range(0, 100) var object_scale := 1.0
 
-@export_category("Modifiers")
-@export var modifiers: Array[SpawnModifier] = []
-
 @onready var path_3d: Path3D = get_node(path_3d_node)
 @onready var objects_container: Node3D = get_node(objects_container_node)
 @onready var curve: Curve3D = path_3d.curve
@@ -65,6 +70,17 @@ func _validate_property(property: Dictionary):
 		property.usage |= PROPERTY_USAGE_NO_EDITOR
 	if use_bpm and property.name == "default_spacing":
 		property.usage |= PROPERTY_USAGE_READ_ONLY
+	
+	#if property.name == "index_pattern":
+		#if use_random_pattern:
+			#property.usage |= PROPERTY_USAGE_READ_ONLY
+		#else:
+			#property.usage &= ~PROPERTY_USAGE_READ_ONLY
+	#elif property.name == "random_seed":
+		#if not use_random_pattern:
+			#property.usage |= PROPERTY_USAGE_READ_ONLY
+		#else:
+			#property.usage &= ~PROPERTY_USAGE_READ_ONLY
 
 func _exit_tree() -> void:
 	path_3d.curve_changed.disconnect(bake_objects)
@@ -86,6 +102,14 @@ func bake_objects() -> void:
 	var total_length := curve.get_baked_length()
 	var index := 0
 	
+	var active_pattern := index_pattern
+	if not use_random_pattern:
+		# remove non-alphanumeric characters from string
+		# TODO cache compiled regex?
+		var regex := RegEx.new()
+		regex.compile("^[A-Za-z]")
+		active_pattern = regex.sub(active_pattern, "", true).to_upper()
+	
 	for offset: float in range(0, total_length, object_interval):
 		# TODO measure impact of cubic sampling (true argument)
 		var object_transform := curve.sample_baked_with_rotation(offset, true)
@@ -93,9 +117,23 @@ func bake_objects() -> void:
 		var point := object_transform.origin
 		
 		# TODO implement this as RandomPattern and add 1-3 pattern and AABB pattern etc.
+		# [Strategy pattern with enum]
 		# either user selectable with dropdown or custom resource exported as abstract base class
-		var mesh_index := rng.randi_range(0, objects.size() - 1)
-		var object_scene: PackedScene = objects[mesh_index]
+		var object_index := 0
+		if use_random_pattern:
+			object_index = rng.randi_range(0, objects.size() - 1)
+		else:
+			var active_objects := objects
+			if use_object_shuffle:
+				active_objects = objects.duplicate()
+				CurveSpawnerUtils.shuffle(active_objects, rng)
+			
+			# pick by pattern
+			var pattern_index := index % active_pattern.length()
+			var index_letter := active_pattern[pattern_index]
+			object_index = ord(index_letter) - ord("A")
+		
+		var object_scene: PackedScene = objects[object_index]
 		var object: Node3D = object_scene.instantiate()
 		objects_container.add_child(object, true) # force readable names
 		object.global_transform = object_transform
