@@ -99,16 +99,16 @@ func bake_objects() -> void:
 	for child: Node3D in objects_container.get_children():
 		child.queue_free() # TODO introduce object pooling?
 	
-	var total_length := curve.get_baked_length()
-	var index := 0
-	
+	# remove non-alphabetic characters from pattern string
 	var active_pattern := index_pattern
 	if not use_random_pattern:
-		# remove non-alphanumeric characters from string
 		# TODO cache compiled regex?
 		var regex := RegEx.new()
 		regex.compile("^[A-Za-z]")
 		active_pattern = regex.sub(active_pattern, "", true).to_upper()
+	
+	var total_length := curve.get_baked_length()
+	var index := 0
 	
 	for offset: float in range(0, total_length, object_interval):
 		# TODO measure impact of cubic sampling (true argument)
@@ -131,7 +131,7 @@ func bake_objects() -> void:
 			# pick by pattern
 			var pattern_index := index % active_pattern.length()
 			var index_letter := active_pattern[pattern_index]
-			object_index = ord(index_letter) - ord("A")
+			object_index = abs(ord(index_letter) - ord("A"))
 		
 		var object_scene: PackedScene = objects[object_index]
 		var object: Node3D = object_scene.instantiate()
