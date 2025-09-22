@@ -146,6 +146,7 @@ func bake_objects() -> void:
 				object.owner = self.owner
 		
 		for modifier: SpawnModifier in modifiers:
-			modifier.apply(object, point, up_vector, index)
+			if modifier:
+				modifier.apply(object, point, up_vector, index)
 		
 		index += 1
