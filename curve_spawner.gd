@@ -58,6 +58,7 @@ class_name CurveSpawner extends Node3D
 
 @export_category("Transforms")
 @export_range(0, 100) var object_scale := 1.0
+@export var lock_rotation := false ## if the rotation of the spawned scenes should aling with the curve or not
 
 @onready var path_3d: Path3D = get_node(path_3d_node)
 @onready var objects_container: Node3D = get_node(objects_container_node)
@@ -136,8 +137,12 @@ func bake_objects() -> void:
 		var object_scene: PackedScene = objects[object_index]
 		var object: Node3D = object_scene.instantiate()
 		objects_container.add_child(object, true) # force readable names
-		object.global_transform = object_transform
 		object.scale = Vector3.ONE * object_scale
+		
+		if lock_rotation:
+			object.global_position = point
+		else:
+			object.global_transform = object_transform
 		
 		if add_to_scene:
 			if Engine.is_editor_hint():
