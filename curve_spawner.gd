@@ -115,9 +115,13 @@ func bake_objects() -> void:
 	for offset: float in range(0, total_length, object_interval):
 		# TODO measure impact of cubic sampling (true argument)
 		var object_transform := curve.sample_baked_with_rotation(offset, true)
-		object_transform.origin = path_3d.to_global(object_transform.origin)
-		var up_vector := object_transform.basis.y
-		var point := object_transform.origin
+		var point := path_3d.to_global(object_transform.origin)
+		object_transform.origin = point
+		
+		var path_basis := path_3d.global_transform.basis
+		var up_vector := path_basis * object_transform.basis.y
+		var forward_vector := path_basis * object_transform.basis.z
+		
 		var curve_progress := 0.0
 		if total_length >= 0:
 			curve_progress = offset / total_length
@@ -160,6 +164,6 @@ func bake_objects() -> void:
 		
 		for modifier: SpawnModifier in modifiers:
 			if modifier:
-				modifier.apply(object, point, up_vector, index, curve_progress)
+				modifier.apply(object, point, up_vector, forward_vector, index, curve_progress)
 		
 		index += 1

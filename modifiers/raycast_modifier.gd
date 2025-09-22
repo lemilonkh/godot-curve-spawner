@@ -32,7 +32,7 @@ func update_physics(space_state: PhysicsDirectSpaceState3D, _delta: float) -> vo
 	is_dirty = false
 	updated.emit()
 
-func apply(object: Node3D, point: Vector3, up: Vector3, index: int, curve_progress: float) -> void:
+func apply(object: Node3D, point: Vector3, up: Vector3, forward: Vector3, index: int, curve_progress: float) -> void:
 	starting_positions.push_back(object.global_position)
 	is_dirty = true
 	
