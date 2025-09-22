@@ -9,7 +9,7 @@ class_name WiggleModifier extends SpawnModifier
 # TODO this should maybe take the curve progress as an input instead of using only one axis of the global position
 # for more natural results along very curvy curves
 
-func apply(object: Node3D, point: Vector3, up: Vector3, index: int = 0) -> void:
+func apply(object: Node3D, point: Vector3, up: Vector3, index: int, curve_progress: float) -> void:
 	var wiggle := Vector3.ZERO
 	wiggle[axis] = amplitude * cos(object.global_position[along_axis] * period * 2 * PI)
 	object.global_position += wiggle

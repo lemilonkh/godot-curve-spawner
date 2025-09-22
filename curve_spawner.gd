@@ -116,6 +116,9 @@ func bake_objects() -> void:
 		var object_transform := curve.sample_baked_with_rotation(offset, true)
 		var up_vector := object_transform.basis.y
 		var point := object_transform.origin
+		var curve_progress := 0.0
+		if total_length >= 0:
+			curve_progress = offset / total_length
 		
 		# TODO implement this as RandomPattern and add 1-3 pattern and AABB pattern etc.
 		# [Strategy pattern with enum]
@@ -152,6 +155,6 @@ func bake_objects() -> void:
 		
 		for modifier: SpawnModifier in modifiers:
 			if modifier:
-				modifier.apply(object, point, up_vector, index)
+				modifier.apply(object, point, up_vector, index, curve_progress)
 		
 		index += 1
