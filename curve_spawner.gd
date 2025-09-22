@@ -58,7 +58,8 @@ class_name CurveSpawner extends Node3D
 
 @export_category("Transforms")
 @export_range(0, 100) var object_scale := 1.0
-@export var lock_rotation := false ## if the rotation of the spawned scenes should aling with the curve or not
+@export var lock_rotation := false ## if the rotation of the spawned scenes should stay constant or align with the curve
+@export var only_y_rotation := false ## if the rotation of the spawned scenes should aling with the curve but only as rotation around the object's Y axis, ignores lock_rotation.
 
 @onready var path_3d: Path3D = get_node(path_3d_node)
 @onready var objects_container: Node3D = get_node(objects_container_node)
@@ -114,6 +115,7 @@ func bake_objects() -> void:
 	for offset: float in range(0, total_length, object_interval):
 		# TODO measure impact of cubic sampling (true argument)
 		var object_transform := curve.sample_baked_with_rotation(offset, true)
+		object_transform.origin = path_3d.to_global(object_transform.origin)
 		var up_vector := object_transform.basis.y
 		var point := object_transform.origin
 		var curve_progress := 0.0
@@ -142,7 +144,10 @@ func bake_objects() -> void:
 		objects_container.add_child(object, true) # force readable names
 		object.scale = Vector3.ONE * object_scale
 		
-		if lock_rotation:
+		if only_y_rotation:
+			object.global_position = point
+			object.global_rotation.y += object_transform.basis.get_euler().y
+		elif lock_rotation:
 			object.global_position = point
 		else:
 			object.global_transform = object_transform
