@@ -95,6 +95,12 @@ func bake_objects() -> void:
 	var total_length := curve.get_baked_length()
 	var index := 0
 	
+	# reset all modifiers before iterating over points/ objects
+	# to make sure no temporary data is kept between baking attempts
+	for modifier: SpawnModifier in modifiers:
+		if modifier:
+			modifier.reset()
+	
 	for offset: float in range(0, total_length, object_interval):
 		# TODO measure impact of cubic sampling (true argument)
 		var object_transform := curve.sample_baked_with_rotation(offset, true)

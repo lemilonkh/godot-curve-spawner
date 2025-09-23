@@ -6,3 +6,6 @@ var uses_physics := false ## used in e.g. RaycastModifier to defer work to _phys
 
 func apply(object: Node3D, point: Vector3, up: Vector3, forward: Vector3, index: int, curve_progress: float) -> void:
 	pass
+
+func reset() -> void:
+	pass

@@ -7,6 +7,7 @@ signal updated
 @export var floor_offset := 1.0 ## height above the detected floor in meters
 
 var starting_positions: Array[Vector3] = []
+var cached_objects: Array[Node3D] = []
 var cached_positions: Array[Vector3] = []
 
 var is_dirty := false
@@ -32,8 +33,15 @@ func update_physics(space_state: PhysicsDirectSpaceState3D, _delta: float) -> vo
 	is_dirty = false
 	updated.emit()
 
+func reset() -> void:
+	starting_positions.clear()
+	cached_objects.clear()
+	cached_positions.clear()
+	is_dirty = false
+
 func apply(object: Node3D, point: Vector3, up: Vector3, forward: Vector3, index: int, curve_progress: float) -> void:
 	starting_positions.push_back(object.global_position)
+	cached_objects.push_back(object)
 	is_dirty = true
 	
 	# deferred until next physics update
