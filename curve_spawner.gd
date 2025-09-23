@@ -3,13 +3,7 @@ class_name CurveSpawner extends Node3D
 
 @export_tool_button("Bake Objects", "Bake") var bake_button := bake_objects
 @export var add_to_scene := false ## when enabled, nodes are added to the scene and saved with it (by setting the owner)
-@export var use_auto_bake := false: ## when curve is changed, update spawned objects to be moved onto the new path
-	set(value):
-		use_auto_bake = value
-		if use_auto_bake:
-			path_3d.curve_changed.connect(bake_objects)
-		elif path_3d.curve_changed.is_connected(bake_objects):
-			path_3d.curve_changed.disconnect(bake_objects)
+@export var use_auto_bake := false: set = set_use_auto_bake ## when curve is changed, update spawned objects to be moved onto the new path
 
 @export_category("Object Modifiers")
 @export var modifiers: Array[SpawnModifier] = []
@@ -67,26 +61,6 @@ class_name CurveSpawner extends Node3D
 
 var rng := RandomNumberGenerator.new()
 
-func _validate_property(property: Dictionary):
-	if not use_bpm and (property.name == "bpm" or property.name == "average_player_speed"):
-		property.usage |= PROPERTY_USAGE_NO_EDITOR
-	if use_bpm and property.name == "default_spacing":
-		property.usage |= PROPERTY_USAGE_READ_ONLY
-	
-	#if property.name == "index_pattern":
-		#if use_random_pattern:
-			#property.usage |= PROPERTY_USAGE_READ_ONLY
-		#else:
-			#property.usage &= ~PROPERTY_USAGE_READ_ONLY
-	#elif property.name == "random_seed":
-		#if not use_random_pattern:
-			#property.usage |= PROPERTY_USAGE_READ_ONLY
-		#else:
-			#property.usage &= ~PROPERTY_USAGE_READ_ONLY
-
-func _exit_tree() -> void:
-	path_3d.curve_changed.disconnect(bake_objects)
-
 func bake_objects() -> void:
 	rng.seed = random_seed
 	
@@ -97,6 +71,15 @@ func bake_objects() -> void:
 		object_interval = beat_distance
 	else:
 		object_interval = default_spacing
+	
+	# make sure objects container node exists and create it if necessary
+	if !objects_container:
+		push_warning("Objects container node not found, adding a new one to the scene...")
+		objects_container = Node3D.new()
+		objects_container.name = "Objects"
+		add_child(objects_container) # TODO add in the path specified?
+		objects_container_node = get_path_to(objects_container)
+		objects_container.owner = _get_active_scene_root() # save into active scene
 	
 	for child: Node3D in objects_container.get_children():
 		child.queue_free() # TODO introduce object pooling?
@@ -157,13 +140,46 @@ func bake_objects() -> void:
 			object.global_transform = object_transform
 		
 		if add_to_scene:
-			if Engine.is_editor_hint():
-				object.owner = EditorInterface.get_edited_scene_root()
-			else:
-				object.owner = self.owner
+			object.owner = _get_active_scene_root()
 		
 		for modifier: SpawnModifier in modifiers:
 			if modifier:
 				modifier.apply(object, point, up_vector, forward_vector, index, curve_progress)
 		
 		index += 1
+
+func _get_active_scene_root() -> Node:
+	if Engine.is_editor_hint():
+		return EditorInterface.get_edited_scene_root()
+	else:
+		return self.owner
+
+func set_use_auto_bake(value: bool) -> void:
+	use_auto_bake = value
+	if not is_node_ready():
+		await ready
+	
+	if use_auto_bake:
+		path_3d.curve_changed.connect(bake_objects)
+	elif path_3d.curve_changed.is_connected(bake_objects):
+		path_3d.curve_changed.disconnect(bake_objects)
+
+func _exit_tree() -> void:
+	path_3d.curve_changed.disconnect(bake_objects)
+
+func _validate_property(property: Dictionary):
+	if not use_bpm and (property.name == "bpm" or property.name == "average_player_speed"):
+		property.usage |= PROPERTY_USAGE_NO_EDITOR
+	if use_bpm and property.name == "default_spacing":
+		property.usage |= PROPERTY_USAGE_READ_ONLY
+	
+	#if property.name == "index_pattern":
+		#if use_random_pattern:
+			#property.usage |= PROPERTY_USAGE_READ_ONLY
+		#else:
+			#property.usage &= ~PROPERTY_USAGE_READ_ONLY
+	#elif property.name == "random_seed":
+		#if not use_random_pattern:
+			#property.usage |= PROPERTY_USAGE_READ_ONLY
+		#else:
+			#property.usage &= ~PROPERTY_USAGE_READ_ONLY
